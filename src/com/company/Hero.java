@@ -4,19 +4,10 @@ import java.util.Arrays;
 
 public class Hero extends Creature {
 
-    private static final int[] HEALTH_RANGE = new int[2];
-    private static final int[] ATTACK_RANGE = new int[2];
-    private static final int[] DEFENSE_RANGE = new int[2];
-    static {
-        HEALTH_RANGE[0] = 20;
-        HEALTH_RANGE[1] = 30;
-
-        ATTACK_RANGE[0] = 1;
-        ATTACK_RANGE[1] = 3;
-
-        DEFENSE_RANGE[0] = 1;
-        DEFENSE_RANGE[1] = 5;
-    }
+    // defines the range of possibilities for the primary stats
+    private static final int[] HEALTH_RANGE = {20, 30};
+    private static final int[] ATTACK_RANGE = {1, 3};
+    private static final int[] DEFENSE_RANGE = {1, 5};
 
     private int gold;
     private final int[] potions;
@@ -26,6 +17,7 @@ public class Hero extends Creature {
     /**
      * Instance a Hero with semi-random stats
      *
+     * @param leftoverGold allows the hero to retain gold from previous adventures
      */
     public Hero(int leftoverGold) {
         super(HEALTH_RANGE, ATTACK_RANGE, DEFENSE_RANGE);
@@ -39,19 +31,20 @@ public class Hero extends Creature {
     /**
      * the hero drinks a potion healing themselves up to 2pts
      *
-     * @return boolean representing success of action
+     * @return int representing the amount healed by the potion
      */
-    public boolean drinkPotion() {
-        int i = 0;
-        while (potions[i] == 0) {
-            i++;
+    public int drinkPotion() {
+        int index = 0;
+        while (potions[index] == 0) {
+            index++;
         }
-        if (i < potions.length) {
-            healthPoints = Math.max(healthPoints + potions[i], MAX_HEALTH);
-            potions[i] = 0;
-            return true;
+        if (index < potions.length) {
+            int healthBefore = healthPoints;
+            healthPoints = Math.max(healthPoints + potions[index], MAX_HEALTH);
+            potions[index] = 0;
+            return healthPoints - healthBefore;
         }
-        return false;
+        return 0;
     }
 
     /**
@@ -59,12 +52,14 @@ public class Hero extends Creature {
      */
     public void slayedAGoblin() {
         goblinsSlain += 1;
+        gold += 2;
     }
 
     /**
      * Hero level up
      */
     public void levelUp() {
+        // TODO: increase hero potency every level?
         level += 1;
     }
 
@@ -110,5 +105,11 @@ public class Hero extends Creature {
      */
     public int getGoblinsSlain() {
         return goblinsSlain;
+    }
+
+    public String toString() {
+        String result = super.toString();
+        result += String.format("GP: %s, POT: %s", gold, Arrays.toString(potions));
+        return result;
     }
 }

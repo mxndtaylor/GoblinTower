@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        Scanner ui = new Scanner(System.in);
+        Scanner input = new Scanner(System.in);
         PrintStream output = System.out;
         output.println("Welcome to the Goblin Tower!");
         output.println();
@@ -16,22 +16,17 @@ public class Main {
             Hero hero = new Hero(gold);
             int stepTaken = 0;
             while (!hero.isDead()) {
-                if (goblinFoundAtStep()){
+                if (stepTaken % 10 == 0) {
+                    // TODO: add potion shop mechanic
+                    hero.levelUp();
+                } else if (goblinFoundAtStep()){
                     Goblin goblin = new Goblin();
-                    fight(hero, goblin);
+                    Fight clash = new Fight(hero, goblin);
+                    clash.beginFight(input, output);
                 }
                 stepTaken++;
             }
-        }
-    }
-
-    public static void fight(Hero hero, Goblin goblin) {
-        while (!hero.isDead() && !goblin.isDead()) {
-            goblin.attack(hero);
-            if (hero.isDead() && hero.drinkPotion()) {
-
-            }
-            hero.attack(goblin);
+            // TODO: ask to continue play
         }
     }
 

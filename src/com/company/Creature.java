@@ -9,12 +9,14 @@ public class Creature {
 
     public final int MAX_HEALTH;
 
-    private int attack;
-    private int defense;
+    private final int attack;
+    private final int defense;
 
     public int healthPoints;
+
     /**
-     * Instance a creature with semirandom stats
+     * Instance a creature with random stats from the given ranges
+     *
      * @param healthRange the range of each creature's health
      * @param attackRange the range of each creature's attack
      * @param defenseRange the range of each creature's defense
@@ -29,19 +31,23 @@ public class Creature {
     /**
      * Attack another creature
      *
-     * @param other the creature targetted by the attack
+     * @param other the creature targeted by the attack
+     * @return int representing actual damage dealt
      */
-    public void attack(Creature other) {
-        other.takeDamage(attack);
+    public int attack(Creature other) {
+        return other.takeDamage(attack);
     }
 
     /**
      * Creature takes some damage
      *
      * @param incomingDamage the incoming damage to be taken
+     * @return int representing received damage
      */
-    public void takeDamage(int incomingDamage) {
-        healthPoints = Math.max(healthPoints - (incomingDamage - defense), 0);
+    public int takeDamage(int incomingDamage) {
+        int damage = incomingDamage - defense;
+        healthPoints = Math.max(healthPoints - damage, 0);
+        return damage;
     }
 
     /**
@@ -51,5 +57,20 @@ public class Creature {
      */
     public boolean isDead() {
         return healthPoints <= 0;
+    }
+
+    /**
+     * String representation of creature
+     *
+     * @return String detailing stats of the creature
+     */
+    public String toString() {
+        return String.format(
+                "HP: %s/%s, ATT: %s, DEF: %s",
+                healthPoints,
+                MAX_HEALTH,
+                attack,
+                defense
+        );
     }
 }
