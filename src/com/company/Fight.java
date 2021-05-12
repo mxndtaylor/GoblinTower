@@ -62,7 +62,8 @@ public class Fight {
 
     /**
      * check if the fight is finished
-     * @return boolean true if one of the creatures involved is dead
+     *
+     * @return boolean true if none of the creatures involved are dead
      */
     public boolean fightIsNotOver() {
         return !player.isDead() && !mob.isDead();
@@ -117,6 +118,9 @@ public class Fight {
 
     /**
      * Runs the fight
+     *
+     * @param input the Scanner that captures user input
+     * @param output the PrintStream that the user reads
      */
     public void beginFight(Scanner input, PrintStream output) {
         printPrompt(output, "begin");
