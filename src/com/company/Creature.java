@@ -12,6 +12,8 @@ public class Creature {
     private final int attack;
     private final int defense;
 
+    private boolean defending;
+
     public int healthPoints;
 
     /**
@@ -22,10 +24,11 @@ public class Creature {
      * @param defenseRange the range of each creature's defense
      */
     public Creature(int[] healthRange, int[] attackRange, int[] defenseRange) {
-        this.MAX_HEALTH = (int) (random() * (healthRange[1] - healthRange[0]) + healthRange[0]);
-        this.healthPoints = MAX_HEALTH;
-        this.attack = (int) (random() * (attackRange[1] - attackRange[0]) + attackRange[0]);
-        this.defense = (int) (random() * (defenseRange[1] - defenseRange[0]) + defenseRange[0]);
+        MAX_HEALTH = (int) (random() * (healthRange[1] - healthRange[0] + 1) + healthRange[0]);
+        healthPoints = MAX_HEALTH;
+        attack = (int) (random() * (attackRange[1] - attackRange[0] + 1) + attackRange[0]);
+        defense = (int) (random() * (defenseRange[1] - defenseRange[0] + 1) + defenseRange[0]);
+        defending = false;
     }
 
     /**
@@ -39,13 +42,27 @@ public class Creature {
     }
 
     /**
+     * toggles the defending status of the creature
+     */
+    public void toggleDefend() {
+        defending = !defending;
+    }
+
+    public boolean getDefending() {
+        return defending;
+    }
+
+    /**
      * Creature takes some damage
      *
      * @param incomingDamage the incoming damage to be taken
      * @return int representing received damage
      */
     public int takeDamage(int incomingDamage) {
-        int damage = incomingDamage - defense;
+        int damage = incomingDamage;
+        if (defending) {
+            damage = Math.max(damage - defense, 0);
+        }
         healthPoints = Math.max(healthPoints - damage, 0);
         return damage;
     }

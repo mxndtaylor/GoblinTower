@@ -2,6 +2,9 @@ package com.company;
 
 import java.util.Arrays;
 
+/**
+ * Hero class to play as in goblin tower
+ */
 public class Hero extends Creature {
 
     // defines the range of possibilities for the primary stats
@@ -35,12 +38,12 @@ public class Hero extends Creature {
      */
     public int drinkPotion() {
         int index = 0;
-        while (potions[index] == 0) {
+        while (index < potions.length && potions[index] == 0) {
             index++;
         }
         if (index < potions.length) {
             int healthBefore = healthPoints;
-            healthPoints = Math.max(healthPoints + potions[index], MAX_HEALTH);
+            healthPoints = Math.min(healthPoints + potions[index], MAX_HEALTH);
             potions[index] = 0;
             return healthPoints - healthBefore;
         }
@@ -53,6 +56,15 @@ public class Hero extends Creature {
     public void slayedAGoblin() {
         goblinsSlain += 1;
         gold += 2;
+    }
+
+    /**
+     * fetch hero gold
+     *
+     * @return int with hero gold
+     */
+    public int getGold() {
+        return gold;
     }
 
     /**
@@ -76,19 +88,45 @@ public class Hero extends Creature {
     }
 
     /**
-     * Hero buys some number of potions
+     * counts the number of potions
+     *
+     * @return the number of potions
      */
-    public void buyPotions(int numberOfPotions) {
+    public int currentPotionNumber() {
         int currentPotionNumber = 0;
         for (int potion : potions) {
             currentPotionNumber += potion / 2;
         }
-        if (gold >= numberOfPotions * 4 && numberOfPotions <= currentPotionNumber) {
-            gold -= numberOfPotions;
-            for (int i = 0; i < numberOfPotions; i++) {
-                getPotion();
+        return currentPotionNumber;
+    }
+
+    /**
+     * attempts to buy a single potion
+     *
+     * @return success of operation
+     */
+    private boolean buyPotion() {
+        if (gold >= 4 && currentPotionNumber() < 5) {
+            gold -= 4;
+            getPotion();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Hero buys some number of potions
+     */
+    public int buyPotions(int numberOfPotions) {
+        int potionsBought = 0;
+        for (int i = 0; i < numberOfPotions; i++) {
+            if (buyPotion()) {
+                potionsBought += 1;
+            } else {
+                break;
             }
-        } //TODO: figure out what to do when hero cannot buy as many potions
+        }
+        return potionsBought;
     }
 
     /**
@@ -107,9 +145,14 @@ public class Hero extends Creature {
         return goblinsSlain;
     }
 
+    /**
+     * produce String representation for console output
+     *
+     * @return String including the relevant stats of the Hero
+     */
     public String toString() {
         String result = super.toString();
-        result += String.format("GP: %s, POT: %s", gold, Arrays.toString(potions));
+        result += String.format(" GP: %s, POT: %s", gold, Arrays.toString(potions));
         return result;
     }
 }
